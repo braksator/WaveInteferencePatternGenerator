@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="./favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="./favicon-16x16.png">
+    <link rel="manifest" href="./site.webmanifest">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Wave Interference Pattern</title>
+    <style>
+      html,
+      body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+        color: #999;
+        font-family: calibri, verdana, sans-serif;
+      }
+
+      a {
+        color: #8ab4f8;
+      }
+
+      #main {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        opacity: 0;
+        transition: opacity .3s linear;
+      }
+
+      canvas {
+        padding: 0;
+        margin: 90px auto 50px auto;
+        display: block;
+        border: 1px solid #666;
+        box-shadow: rgba(100, 100, 100, 0.2) 0px 5px 20px 0px;
+        border-radius: 6px;
+        min-width: 640px;
+        min-height: 480px;
+      }
+
+      #toolbar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        background-color: #fff;
+        padding: 5px;
+        box-sizing: border-box;
+        z-index: 1;
+        border-bottom: 1px solid #ccc;
+        box-shadow: rgba(100, 100, 100, 0.2) 0px 5px 20px 0px;
+      }
+
+      #toolbar-inner {
+        max-width: 1280px;
+        padding: 0 2em;
+        margin: auto;
+      }
+
+      #controls {
+        float: right;
+        clear: both;
+        opacity: 0;
+        transition: opacity .3s linear;
+      }
+
+      #controls>label {
+        margin-left: 1em;
+      }
+
+      #add {
+        margin: 0 2em;
+      }
+
+      #foot {
+        font-size: small;
+        text-align: center;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        padding: 0.5em;
+        opacity: 0.5;
+      }
+
+      h1 {
+        font-size: 1em;
+        margin: 0;
+        padding: 0;
+        display: inline-block;
+        color: #666;
+      }
+
+      #tb-step,
+      .point-col input[type=number] {
+        width: 4em;
+      }
+
+      .point-col {
+        display: inline-block;
+        margin-right: 1em;
+		position: relative;
+      }
+	  .range-indicator {
+		font-size: small;
+		position: absolute;
+		top: 75%;
+		left: 0;
+		right: 0;
+		text-align: right;
+	  }
+
+      .point-row {
+        display: inline-block;
+        width: 100%;
+        margin-bottom: 1em;
+      }
+
+      #list-wrap {
+        text-align: center;
+      }
+
+      #list {
+        margin-bottom: .5em;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="toolbar">
+      <div id="toolbar-inner">
+        <h1>🌊 Wave Interference Pattern Generator</h1>
+        <div id="controls">
+          <label for="tb-step" title="Time step">
+            <span class="label">⌛</span>
+            <input id="tb-step" onchange="updateStep()" type="number" step="0.01" min="0.01" max="10" value="0.5">
+          </label>
+          <label for="tb-screen" title="Screen size">
+            <span class="label">📺</span>
+            <select id="tb-screen" onchange="resizeCanvas()">
+              <option value="640x480">480p</option>
+              <option value="1280x720">720p</option>
+            </select>
+          </label>
+        </div>
+      </div>
+    </div>
+    </div>
+    <div id="main">
+      <canvas id="canvas"></canvas>
+      <div id="list-wrap">
+        <div id="list"></div>
+        <button id="add">➕ Add point source</button>
+      </div>
+    </div>
+    <div id="foot">Created in May 2023 by D.A. Braksator. Free to use and modify, inspired by <a target="_blank" href="https://www.youtube.com/watch?v=sXlYmLQdJU4">Vanderhout's YouTube video</a>. </div>
+    <script>
+			
+		// Setup
+		const canvas = document.getElementById('canvas');
+		const ctx = canvas.getContext('2d');
+		const list = document.getElementById('list');
+		let width, height, step;
+		let defaults = [{ x: 75, y: 25, amp: 1, len: 10}, { x: 25, y: 75, amp: 1, len: 10 }];
+		let points = JSON.parse(localStorage.getItem('points'));
+		if (!points || !points.len) {
+		  points = defaults;
+		}
+		let time = 0;
+
+		// The magic.
+		function draw() {
+		  ctx.clearRect(0, 0, width, height);
+		  for (let x = 0; x < width; x++) {
+			for (let y = 0; y < height; y++) {
+			  let wave = 0;
+			  for (let i = 0; i < points.length; i++) {
+				if (points[i].x === null || points[i].y === null || !points[i].amp || !points[i].len) {
+				  continue;
+				}
+				const pointX = points[i].x / 100 * width;
+				const pointY = points[i].y / 100 * height;
+				const distance = Math.sqrt((x - pointX) ** 2 + (y - pointY) ** 2);
+				wave += points[i].amp * Math.sin(2 * Math.PI * distance / points[i].len - time);
+			  }
+			  const intensity = 128 + 127 * wave / points.reduce((sum, p) => sum + p.amp, 0);
+			  const hue = 240 - 240 * (intensity / 255);
+			  ctx.fillStyle = `hsl(${hue}, 100%, 50%)`;
+			  ctx.fillRect(x, y, 1, 1);
+			}
+		  }
+		  time += step;
+		}
+
+		// Config handling functions.
+		function updateStep() {
+		  let stepValue = document.getElementById('tb-step').value;
+		  localStorage.setItem('stepValue', stepValue);
+		  step = parseFloat(stepValue);
+		}
+
+		function resizeCanvas() {
+		  const screenValue = document.getElementById('tb-screen').value;
+		  localStorage.setItem('screenValue', screenValue);
+		  const canvasSize = screenValue.split("x");
+		  width = canvas.width = canvasSize[0];
+		  height = canvas.height = canvasSize[1];
+		  renderPointsList();
+		}
+
+		function generatePointRow(point, index) {
+		  const row = document.createElement('div');
+		  const pointX = Math.round(point.x / 100 * width);
+		  const pointY = Math.round(point.y / 100 * height);
+		  row.classList.add('point-row');
+		  row.innerHTML = `
+			<div class="point-col"><span><b>Point source ${index+1}</b></span></div>
+			<div class="point-col">
+			  <label for="x-${index}">X Position:</label>
+			  <input id="x-${index}" type="range" min="0" max="100" step="0.5" value="${point.x}">
+			  <span class="range-indicator">${point.x}% (${pointX})</span>
+			</div>
+			<div class="point-col">
+			  <label for="y-${index}">Y Position:</label>
+			  <input id="y-${index}" type="range" min="0" max="100" step="0.5" value="${point.y}">
+			  <span class="range-indicator">${point.y}% (${pointY})</span>
+			</div>
+			<div class="point-col">
+			  <label for="amp-${index}">Amplitude:</label>
+			  <input id="amp-${index}" type="number" min="0.1" step="0.1" value="${point.amp}">
+			</div>
+			<div class="point-col">
+			  <label for="len-${index}">Wavelength:</label>
+			  <input id="len-${index}" type="number" min="0.1" step="0.1" value="${point.len}">
+			</div>
+
+			<div class="point-col">
+			  <button class="delete-btn" title="Delete point">❌</button>
+			</div>
+		  `;
+		  return row;
+		}
+
+		function renderPointsList() {
+		  list.innerHTML = '';
+		  points.forEach((point, index) => {
+			const row = generatePointRow(point, index);
+			list.appendChild(row);
+		  });
+		}
+
+		// Save points to localStorage
+		function savePointsList() {
+		  localStorage.setItem('points', JSON.stringify(points));
+		}
+
+		// Add point
+		const addPointBtn = document.getElementById('add');
+		addPointBtn.addEventListener('click', () => {
+		  const newPoint = {
+			x: 50,
+			y: 50,
+			amp: 1,
+			len: 10
+		  };
+		  points.push(newPoint);
+		  const newRow = generatePointRow(newPoint, points.length - 1);
+		  list.appendChild(newRow);
+		  savePointsList();
+		});
+
+		// Delete point
+		list.addEventListener('click', (event) => {
+		  const deleteBtn = event.target.closest('.delete-btn');
+		  if (deleteBtn) {
+			const row = deleteBtn.closest('.point-row');
+			const index = [...list.children].indexOf(row);
+			points.splice(index, 1);
+			row.remove();
+			savePointsList();
+		  }
+		});
+
+		// Update point values
+		list.addEventListener('input', (event) => {
+		  const input = event.target;
+		  const row = input.closest('.point-row');
+		  const index = [...list.children].indexOf(row);
+		  const property = input.id.split('-')[0];
+		  points[index][property] = Number(input.value);
+		  savePointsList();
+		  renderPointsList();
+		});
+
+		// Set defaults in toolbar if these are missing
+		document.getElementById('tb-step').value = localStorage.getItem('stepValue') || 0.5;
+		document.getElementById('tb-screen').value = localStorage.getItem('screenValue') || '640x480';
+
+		// Trigger everything to begin
+		updateStep();
+		resizeCanvas();
+		setInterval(draw, 10);
+
+		// Fade in
+		document.getElementById('controls').style.opacity = "1";
+		document.getElementById('main').style.opacity = "1";
+	</script>
+  </body>
+</html>
