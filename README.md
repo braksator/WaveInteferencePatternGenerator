@@ -4,7 +4,7 @@ Web-based visualiser of ***2-Point Source Interference Patterns***, and more.  A
 
 May run a bit sluggish depending on your system, ideally you would screen-record and speed up the animation.
 
-🡆 see http://braksator.github.io/waves for live demo
+🡆 ***see http://braksator.github.io/waves for live online demo***
 
 
 *************************************
