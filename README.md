@@ -1,1 +1,1 @@
-see http://braksator.com/waves/ for demo
+see http://braksator.github.io/waves for demo
