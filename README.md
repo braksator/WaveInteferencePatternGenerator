@@ -15,7 +15,7 @@ Since the wave fluctuates continuously, the colors smoothly transition:
 - Blue dominates low areas (troughs of the sine wave).
 - Green appears at neutral zones (wave value near zero), with cyan below and yellow above.
 - Red emerges at high peaks (wave crests).
-- 
+  
 
 *************************************
 
