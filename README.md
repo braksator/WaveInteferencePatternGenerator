@@ -7,12 +7,14 @@ May run a bit sluggish depending on your system, ideally you would screen-record
 🡆 see http://braksator.github.io/waves for live demo
 
 
-## Color Gradient Effect
+#### Color Gradient Effect
 Since the wave fluctuates continuously, the colors smoothly transition:
 
 - Blue dominates low areas (troughs of the sine wave).
 - Green appears at neutral zones (wave value near zero), with cyan below and yellow above.
 - Red emerges at high peaks (wave crests).
+- 
+*************************************
 
 > Inspired by [Vanderhout](https://www.youtube.com/watch?v=sXlYmLQdJU4).
 
