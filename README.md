@@ -9,8 +9,7 @@ May run a bit sluggish depending on your system, ideally you would screen-record
 
 *************************************
 
-#### Color Gradient Effect
-Since the wave fluctuates continuously, the colors smoothly transition:
+#### Wave colour map effect
 
 - Blue dominates low areas (troughs of the sine wave).
 - Green appears at neutral zones (wave value near zero), with cyan below and yellow above.
