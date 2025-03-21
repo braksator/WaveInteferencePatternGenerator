@@ -99,17 +99,17 @@
         display: inline-block;
         margin-right: 1em;
         margin-bottom: .5em;
-		position: relative;
+		    position: relative;
       }
       
-	  .range-indicator {
-		font-size: small;
-		position: absolute;
-		top: 75%;
-		left: 0;
-		right: 0;
-		text-align: right;
-	  }
+      .range-indicator {
+        font-size: small;
+        position: absolute;
+        top: 75%;
+        left: 0;
+        right: 0;
+        text-align: right;
+      }
 
       .point-row {
         display: inline-block;
@@ -176,22 +176,22 @@
 		function draw() {
 		  ctx.clearRect(0, 0, width, height);
 		  for (let x = 0; x < width; x++) {
-			for (let y = 0; y < height; y++) {
-			  let wave = 0;
-			  for (let i = 0; i < points.length; i++) {
-				if (points[i].x === null || points[i].y === null || !points[i].amp || !points[i].len) {
-				  continue;
-				}
-				const pointX = points[i].x / 100 * width;
-				const pointY = points[i].y / 100 * height;
-				const distance = Math.sqrt((x - pointX) ** 2 + (y - pointY) ** 2);
-				wave += points[i].amp * Math.sin(2 * Math.PI * distance / points[i].len - time);
-			  }
-			  const intensity = 128 + 127 * wave / points.reduce((sum, p) => sum + p.amp, 0);
-			  const hue = 240 - 240 * (intensity / 255);
-			  ctx.fillStyle = `hsl(${hue}, 100%, 50%)`;
-			  ctx.fillRect(x, y, 1, 1);
-			}
+        for (let y = 0; y < height; y++) {
+          let wave = 0;
+          for (let i = 0; i < points.length; i++) {
+            if (points[i].x === null || points[i].y === null || !points[i].amp || !points[i].len) {
+              continue;
+            }
+            const pointX = points[i].x / 100 * width;
+            const pointY = points[i].y / 100 * height;
+            const distance = Math.sqrt((x - pointX) ** 2 + (y - pointY) ** 2);
+            wave += points[i].amp * Math.sin(2 * Math.PI * distance / points[i].len - time);
+          }
+          const intensity = 128 + 127 * wave / points.reduce((sum, p) => sum + p.amp, 0);
+          const hue = 240 - 240 * (intensity / 255);
+          ctx.fillStyle = `hsl(${hue}, 100%, 50%)`;
+          ctx.fillRect(x, y, 1, 1);
+        }
 		  }
 		  time += step;
 		}
@@ -240,16 +240,15 @@
 
 			<div class="point-col">
 			  <button class="delete-btn" title="Delete point">❌</button>
-			</div>
-		  `;
+			</div>`;
 		  return row;
 		}
 
 		function renderPointsList() {
 		  list.innerHTML = '';
 		  points.forEach((point, index) => {
-			const row = generatePointRow(point, index);
-			list.appendChild(row);
+        const row = generatePointRow(point, index);
+        list.appendChild(row);
 		  });
 		}
 
@@ -262,10 +261,10 @@
 		const addPointBtn = document.getElementById('add');
 		addPointBtn.addEventListener('click', () => {
 		  const newPoint = {
-			x: 50,
-			y: 50,
-			amp: 1,
-			len: 10
+        x: 50,
+        y: 50,
+        amp: 1,
+        len: 10
 		  };
 		  points.push(newPoint);
 		  const newRow = generatePointRow(newPoint, points.length - 1);
@@ -277,11 +276,11 @@
 		list.addEventListener('click', (event) => {
 		  const deleteBtn = event.target.closest('.delete-btn');
 		  if (deleteBtn) {
-			const row = deleteBtn.closest('.point-row');
-			const index = [...list.children].indexOf(row);
-			points.splice(index, 1);
-			row.remove();
-			savePointsList();
+        const row = deleteBtn.closest('.point-row');
+        const index = [...list.children].indexOf(row);
+        points.splice(index, 1);
+        row.remove();
+        savePointsList();
 		  }
 		});
 
