@@ -105,7 +105,7 @@
         margin-bottom: .5em;
 		    position: relative;
       }
-      
+
       .range-indicator {
         font-size: small;
         position: absolute;
@@ -127,6 +127,12 @@
 
       #list {
         margin-bottom: .5em;
+      }
+
+      #reset {
+        text-align: center;
+        margin: 4em 0 0;
+        font-size: small;
       }
     </style>
   </head>
@@ -156,14 +162,15 @@
         <div id="list"></div>
         <button id="add">➕ Add point source</button>
       </div>
+      <div id="reset"><a href="#" onclick="localStorage.clear(); location.reload();">Reset all</a></div>
     </div>
     <div id="foot">
-	    Created May 2023 by D.A. Braksator. 
-	    Free to use and modify. Inspired by <a target="_blank" href="//www.youtube.com/watch?v=sXlYmLQdJU4">Vanderhout</a>.  
+	    Created May 2023 by D.A. Braksator.
+	    Free to use and modify. Inspired by <a target="_blank" href="//www.youtube.com/watch?v=sXlYmLQdJU4">Vanderhout</a>.
 	    <a target="_blank" href="//github.com/braksator/WaveInteferencePatternGenerator">Github</a> repo.
     </div>
     <script>
-			
+
 		// Setup
 		const canvas = document.getElementById('canvas');
 		const ctx = canvas.getContext('2d');
